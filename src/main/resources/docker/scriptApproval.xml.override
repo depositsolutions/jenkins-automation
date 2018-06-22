@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scriptApproval plugin="script-security@1.34">
+    <approvedScriptHashes>
+        <string>${job.groovy.hash}</string>
+    </approvedScriptHashes>
+    <approvedSignatures>
+        <string>method hudson.plugins.git.GitSCM getBranches</string>
+        <string>method hudson.plugins.git.GitSCM getUserRemoteConfigs</string>
+        <string>method hudson.plugins.git.GitSCM isDoGenerateSubmoduleConfigurations</string>
+        <string>method hudson.plugins.git.GitSCMBackwardCompatibility getExtensions</string>
+    </approvedSignatures>
+    <aclApprovedSignatures/>
+    <approvedClasspathEntries/>
+    <pendingScripts/>
+    <pendingSignatures/>
+    <pendingClasspathEntries/>
+</scriptApproval>

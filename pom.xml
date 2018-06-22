@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.depositsolutions.infrastructure</groupId>
+  <artifactId>auto-jenkins</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <!-- Change (hostname) to use a private Docker registry -->
+    <dockerImageName>depositsolutionsgmbh/${project.artifactId}</dockerImageName>
+    <http.proxy>http://1.2.3.4:3128/</http.proxy>
+    <no.proxy>localhost,127.0.0.0/8,127.0.0.1</no.proxy>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <scm>
+    <developerConnection>scm:git:git@github.com:depositsolutions/auto-jenkins.git</developerConnection>
+  </scm>
+
+<!--
+  <repositories>
+    <repository>
+      <id>Snapshots</id>
+      <url>https://nexus/content/repositories/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>Releases</id>
+      <url>https://nexus/content/repositories/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>Releases</id>
+      <name>Release Repository</name>
+      <url>https://nexus/content/repositories/releases/</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <id>Snapshots</id>
+      <name>Snapshots</name>
+      <url>https://nexus/content/repositories/snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+    <downloadUrl>https://nexus/content/repositories/snapshots/</downloadUrl>
+  </distributionManagement>
+-->
+
+  <dependencies>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <excludes>
+          <exclude>docker/**</exclude>
+        </excludes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.3.5</version>
+        <executions>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>build</goal>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <contextDirectory>src/main/resources/docker</contextDirectory>
+          <repository>${dockerImageName}</repository>
+          <tag>${project.version}</tag>
+          <buildArgs>
+            <httpProxy>${http.proxy}</httpProxy>
+            <noProxy>${no.proxy}</noProxy>
+          </buildArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <http.proxy></http.proxy>
+        <no.proxy></no.proxy>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

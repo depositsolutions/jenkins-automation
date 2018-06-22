@@ -1,0 +1,12 @@
+ci-skip:0.0.2
+email-ext:2.62
+git:3.8.0
+greenballs:1.15
+job-dsl:1.68
+mailer:1.21
+matrix-auth:2.2
+rebuild:1.28
+swarm:3.12
+workflow-aggregator:2.5
+workflow-multibranch:2.18
+blueocean:1.5.0
