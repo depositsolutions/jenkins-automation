@@ -1,0 +1,19 @@
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.getInstance()
+
+// Set global environment variables
+
+def envVarsProperties = instance.getGlobalNodeProperties().getAll(hudson.slaves.EnvironmentVariablesNodeProperty.class)
+if (envVarsProperties.empty) {
+  def entry = new hudson.slaves.EnvironmentVariablesNodeProperty.Entry("MY_VARIABLE", "true")
+  def evnp = new hudson.slaves.EnvironmentVariablesNodeProperty(entry)
+  instance.getGlobalNodeProperties().add(evnp)
+} else {
+  def envVars = envVarsProperties[0].getEnvVars()
+  envVars.put("MY_VARIABLE", "true")
+}
+
+// Finalization
+instance.save()

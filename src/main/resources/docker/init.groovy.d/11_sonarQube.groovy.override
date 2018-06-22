@@ -1,0 +1,36 @@
+import java.util.logging.Logger
+import jenkins.model.*
+import hudson.security.*
+import hudson.plugins.sonar.*
+import hudson.plugins.sonar.model.TriggersConfig
+import hudson.plugins.sonar.utils.SQServerVersions
+
+def logger = Logger.getLogger("")
+def instance = Jenkins.getInstance()
+def pluginManager = instance.getPluginManager()
+
+if (pluginManager.getPlugin('sonar')) {
+    def descriptor = instance.getDescriptor(SonarGlobalConfiguration.class)
+    def sonarInstance = new SonarInstallation(
+            "myinst",  // name of the installation
+            "http://sonarqube.example.com:9000",  // SonarQube server url
+            SQServerVersions.SQ_5_3_OR_HIGHER,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            new TriggersConfig(),
+            "",
+            "",
+            "")
+
+    descriptor.setInstallations(sonarInstance)
+    descriptor.save()
+
+} else {
+    logger.info("The 'sonar' plugin is not installed; skipping SonarQube configuration")
+}
+
+

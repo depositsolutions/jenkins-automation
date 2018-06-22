@@ -26,14 +26,14 @@
   <repositories>
     <repository>
       <id>Snapshots</id>
-      <url>https://nexus/content/repositories/snapshots/</url>
+      <url>https://nexus.example.com/content/repositories/snapshots/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
     </repository>
     <repository>
       <id>Releases</id>
-      <url>https://nexus/content/repositories/releases/</url>
+      <url>https://nexus.example.com/content/repositories/releases/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -44,16 +44,16 @@
     <repository>
       <id>Releases</id>
       <name>Release Repository</name>
-      <url>https://nexus/content/repositories/releases/</url>
+      <url>https://nexus.example.com/content/repositories/releases/</url>
       <layout>default</layout>
     </repository>
     <snapshotRepository>
       <id>Snapshots</id>
       <name>Snapshots</name>
-      <url>https://nexus/content/repositories/snapshots/</url>
+      <url>https://nexus.example.com/content/repositories/snapshots/</url>
       <layout>default</layout>
     </snapshotRepository>
-    <downloadUrl>https://nexus/content/repositories/snapshots/</downloadUrl>
+    <downloadUrl>https://nexus.example.com/content/repositories/snapshots/</downloadUrl>
   </distributionManagement>
 -->
 

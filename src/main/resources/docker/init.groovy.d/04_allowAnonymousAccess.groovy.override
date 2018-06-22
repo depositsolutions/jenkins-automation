@@ -1,0 +1,30 @@
+import java.util.logging.Logger
+import jenkins.model.*
+import hudson.security.*
+import hudson.tasks.Mailer
+
+def logger = Logger.getLogger("")
+def instance = Jenkins.getInstance()
+def pluginManager = instance.getPluginManager()
+
+def permissions = [
+  Permission.fromId("hudson.model.Hudson.Read"),
+  Permission.fromId("hudson.model.Item.Build"),
+  Permission.fromId("hudson.model.Item.Cancel"),
+  Permission.fromId("hudson.model.Item.Discover"),
+  Permission.fromId("hudson.model.Item.Read"),
+  Permission.fromId("hudson.model.Item.Workspace"),
+  Permission.fromId("hudson.model.View.Read"),
+]
+
+if (pluginManager.getPlugin('mailer')) {
+  def strategy = (GlobalMatrixAuthorizationStrategy) instance.getAuthorizationStrategy()
+
+  permissions.each { permission ->
+    strategy.add(permission, "anonymous")
+  }
+
+  instance.save()
+} else {
+  logger.info("The 'mailer' plugin is not installed; skipping build trigger configuration")
+}
