@@ -1,6 +1,7 @@
 # Build from latest LTS version
 FROM jenkins/jenkins:2.107.2-alpine
-MAINTAINER Deposit Solutions (see https://github.com/depositsolutions)
+LABEL "maintainer"="Deposit Solutions"
+LABEL "github-url"="https://github.com/depositsolutions"
 
 ARG httpProxy
 ARG noProxy
@@ -13,13 +14,6 @@ ENV HTTPS_PROXY=${httpProxy} \
     FTP_PROXY=${httpProxy} \
     NO_PROXY=${noProxy} \
     no_proxy=${noProxy}
-
-USER root
-
-# Trust internal CA
-COPY ca-trust/*.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates
-
 
 USER jenkins
 
