@@ -10,7 +10,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- Change (hostname) to use a private Docker registry -->
     <dockerImageName>depositsolutions/${project.artifactId}</dockerImageName>
     <http.proxy>http://1.2.3.4:3128/</http.proxy>
     <no.proxy>localhost,127.0.0.0/8,127.0.0.1</no.proxy>
@@ -22,40 +21,40 @@
     <developerConnection>scm:git:git@github.com:depositsolutions/auto-jenkins.git</developerConnection>
   </scm>
 
-<!--
-  <repositories>
-    <repository>
-      <id>Snapshots</id>
-      <url>https://nexus.example.com/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>Releases</id>
-      <url>https://nexus.example.com/content/repositories/releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
+  <!--
+    <repositories>
+      <repository>
+        <id>Snapshots</id>
+        <url>https://nexus.example.com/content/repositories/snapshots/</url>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+      </repository>
+      <repository>
+        <id>Releases</id>
+        <url>https://nexus.example.com/content/repositories/releases/</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+      </repository>
+    </repositories>
 
-  <distributionManagement>
-    <repository>
-      <id>Releases</id>
-      <name>Release Repository</name>
-      <url>https://nexus.example.com/content/repositories/releases/</url>
-      <layout>default</layout>
-    </repository>
-    <snapshotRepository>
-      <id>Snapshots</id>
-      <name>Snapshots</name>
-      <url>https://nexus.example.com/content/repositories/snapshots/</url>
-      <layout>default</layout>
-    </snapshotRepository>
-    <downloadUrl>https://nexus.example.com/content/repositories/snapshots/</downloadUrl>
-  </distributionManagement>
--->
+    <distributionManagement>
+      <repository>
+        <id>Releases</id>
+        <name>Release Repository</name>
+        <url>https://nexus.example.com/content/repositories/releases/</url>
+        <layout>default</layout>
+      </repository>
+      <snapshotRepository>
+        <id>Snapshots</id>
+        <name>Snapshots</name>
+        <url>https://nexus.example.com/content/repositories/snapshots/</url>
+        <layout>default</layout>
+      </snapshotRepository>
+      <downloadUrl>https://nexus.example.com/content/repositories/snapshots/</downloadUrl>
+    </distributionManagement>
+  -->
 
   <dependencies>
   </dependencies>
@@ -78,24 +77,45 @@
         <groupId>com.spotify</groupId>
         <artifactId>dockerfile-maven-plugin</artifactId>
         <version>1.3.5</version>
-        <executions>
-          <execution>
-            <id>default</id>
-            <goals>
-              <goal>build</goal>
-              <goal>push</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
-          <contextDirectory>src/main/resources/docker</contextDirectory>
           <repository>${dockerImageName}</repository>
-          <tag>${project.version}</tag>
           <buildArgs>
             <httpProxy>${http.proxy}</httpProxy>
             <noProxy>${no.proxy}</noProxy>
           </buildArgs>
         </configuration>
+        <executions>
+          <execution>
+            <id>build-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <!-- This is necessary to prevent the plugin from trying to upload two different docker-info.jar files
+              with the same name. The one generated during this phase is not required. See
+              https://github.com/spotify/dockerfile-maven/issues/11 -->
+              <classifier>docker-info-tmp</classifier>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tag-image</id>
+            <phase>install</phase>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <tag>${project.version}</tag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
