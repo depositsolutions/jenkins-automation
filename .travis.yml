@@ -17,7 +17,5 @@ env:
 
 install:
 - mvn clean install --activate-profiles local -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version
-
-after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - mvn deploy --batch-mode --show-version
