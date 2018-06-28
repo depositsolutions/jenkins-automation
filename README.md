@@ -59,12 +59,8 @@ mvn clean install -Plocal
 ```
 
 
-### Push new auto-jenkins version to GitLab
-
-* Create a new feature branch for your extended auto-jenkins. Increasing version number manually is not required as long as the git-dev-flow guidelines are followed: Jenkins will automatically update the version number according to the branch/commit prefix.
-* Push your branch and create a merge request into master, adding Wout Maaskant (wout.maaskant@deposit-solutions.com) as the reviewer.
-
 ## Literature
 
 * [Jenkins Job DSL API](https://jenkinsci.github.io/job-dsl-plugin/)
 * [Pipeline Steps Reference](https://jenkins.io/doc/pipeline/steps/)
+* [Jenkins Javadoc](http://javadoc.jenkins.io/)
