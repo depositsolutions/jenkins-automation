@@ -1,3 +1,5 @@
+// Configure jobs
+
 class ProjectDefinition {
     final String group
     final String project
@@ -17,7 +19,9 @@ class ProjectDefinition {
 def projectDefinitions = [
         new ProjectDefinition('depositsolutions', 'jenkins-automation'),
         new ProjectDefinition('scheleaap', 'jenkins-automation'),
-        // add more repositories here...
+        // Add new entries here... Do not forget the comma at the end of the last line.
+        // Use `.branches()` to limit the branches to build. For example:
+        // new ProjectDefinition('myorg', 'myrepo').branches('master develop'),
 ]
 
 projectDefinitions.each { projectDefinition ->
@@ -43,6 +47,8 @@ projectDefinitions.each { projectDefinition ->
         }
     }
 }
+
+// Configure views
 
 listView('All (recurse in subfolders)') {
     jobs {
