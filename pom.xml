@@ -11,7 +11,7 @@
 
   <properties>
     <!-- Change (hostname) to use a private Docker registry -->
-    <dockerImageName>depositsolutionsgmbh/${project.artifactId}</dockerImageName>
+    <dockerImageName>depositsolutions/${project.artifactId}</dockerImageName>
     <http.proxy>http://1.2.3.4:3128/</http.proxy>
     <no.proxy>localhost,127.0.0.0/8,127.0.0.1</no.proxy>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
