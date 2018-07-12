@@ -1,0 +1,83 @@
+// Configure jobs
+
+class ProjectDefinition {
+    final String group
+    final String project
+    String branches = 'master feature-* release-* bugfix-* support-*'
+
+    ProjectDefinition(String group, String project) {
+        this.group = group
+        this.project = project
+    }
+
+    ProjectDefinition branches(String branches) {
+        this.branches = branches
+        return this
+    }
+}
+
+def projectDefinitions = [
+        new ProjectDefinition('depositsolutions', 'jenkins-automation'),
+        new ProjectDefinition('scheleaap', 'jenkins-automation'),
+        // Add new entries here... Do not forget the comma at the end of the last line.
+        // Use `.branches()` to limit the branches to build. For example:
+        // new ProjectDefinition('myorg', 'myrepo').branches('master develop'),
+]
+
+projectDefinitions.each { projectDefinition ->
+    def repositoryUrl = 'git@github.com:' + projectDefinition.group + '/' + projectDefinition.project + '.git'
+
+    multibranchPipelineJob(projectDefinition.project) {
+        branchSources {
+            git {
+                remote(repositoryUrl)
+                credentialsId('gitlab-key')
+                includes(projectDefinition.branches)
+            }
+        }
+        orphanedItemStrategy {
+            discardOldItems {
+                numToKeep(0)
+            }
+        }
+        configure { node ->
+            node / sources / data / 'jenkins.branch.BranchSource' / source / extensions / 'hudson.plugins.git.extensions.impl.LocalBranch' {
+                localBranch('**')
+            }
+        }
+    }
+}
+
+// Configure views
+
+listView('All (recurse in subfolders)') {
+    jobs {
+        regex(/.+/)
+    }
+    recurse()
+    columns {
+        status()
+        weather()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        buildButton()
+    }
+}
+
+listView('Masters') {
+    jobs {
+        regex(/.*\/master/)
+    }
+    recurse()
+    columns {
+        status()
+        weather()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        buildButton()
+    }
+}

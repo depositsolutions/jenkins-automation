@@ -1,0 +1,29 @@
+import java.util.logging.Logger
+import jenkins.model.*
+import hudson.security.*
+
+def logger = Logger.getLogger("")
+def instance = Jenkins.getInstance()
+
+logger.info("Creating Swarm user")
+
+def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+hudsonRealm.createAccount("swarm", "swarm")
+instance.setSecurityRealm(hudsonRealm)
+
+def permissions = [
+  Permission.fromId("hudson.model.Hudson.Read"),
+  Permission.fromId("hudson.model.Computer.Build"),
+  Permission.fromId("hudson.model.Computer.Configure"),
+  Permission.fromId("hudson.model.Computer.Connect"),
+  Permission.fromId("hudson.model.Computer.Create"),
+  Permission.fromId("hudson.model.Computer.Delete"),
+  Permission.fromId("hudson.model.Computer.Disconnect"),
+]
+
+def strategy = (GlobalMatrixAuthorizationStrategy) instance.getAuthorizationStrategy()
+permissions.each {
+  strategy.add(it, "swarm")
+}
+
+instance.save()

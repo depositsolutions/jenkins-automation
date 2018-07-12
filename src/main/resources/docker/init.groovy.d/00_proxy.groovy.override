@@ -1,0 +1,23 @@
+import java.util.logging.Logger
+import jenkins.model.*
+
+def logger = Logger.getLogger("")
+
+def instance = Jenkins.getInstance()
+def env = System.getenv()
+
+String proxyHost = env.JENKINS_PROXY_HOST
+String proxyPortString = env.JENKINS_PROXY_PORT
+Integer proxyPort = proxyPortString?.isInteger() ? proxyPortString.toInteger() : null
+String noProxyHosts = env.JENKINS_NO_PROXY_HOSTS
+
+if (proxyPort) {
+  logger.info("Configuring proxy")
+
+  def proxyConfiguration = new hudson.ProxyConfiguration(proxyHost, proxyPort, null, null, noProxyHosts)
+
+  instance.proxy = proxyConfiguration
+  instance.save()
+} else {
+  logger.info("Proxy not configured, skipping")
+}

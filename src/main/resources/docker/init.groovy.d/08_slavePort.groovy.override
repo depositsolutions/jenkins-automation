@@ -1,0 +1,20 @@
+// Set port for slaves
+
+import java.util.logging.Logger
+import jenkins.model.*
+
+def logger = Logger.getLogger("")
+def env = System.getenv()
+
+String definedSlavePortString = env.JENKINS_SLAVEPORT
+if (definedSlavePortString) {
+    def instance = Jenkins.getInstance()
+    int currentSlavePort = instance.getSlaveAgentPort()
+    int definedSlavePort = Integer.parseInt(definedSlavePortString)
+    if (currentSlavePort != definedSlavePort) {
+        instance.setSlaveAgentPort(definedSlavePort)
+        logger.info("Slave port set to " + definedSlavePort)
+        instance.save()
+        instance.doSafeRestart()
+    }
+}

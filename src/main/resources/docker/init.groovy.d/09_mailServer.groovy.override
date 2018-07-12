@@ -1,0 +1,32 @@
+import java.util.logging.Logger
+import jenkins.model.*
+import hudson.security.*
+import hudson.tasks.Mailer
+
+def logger = Logger.getLogger("")
+def env = System.getenv()
+def instance = Jenkins.getInstance()
+def pluginManager = instance.getPluginManager()
+
+if (pluginManager.getPlugin('mailer')) {
+  def smtpHost = env.SMTP_HOST
+  if (smtpHost) {
+    def mailer = instance.getDescriptor("hudson.tasks.Mailer")
+
+    //mailer.setSmtpAuth(user, pass)
+    //mailer.setReplyToAddress(...)
+    mailer.setSmtpHost(smtpHost)
+    //mailer.setUseSsl(...)
+    //mailer.setSmtpPort(...)
+    if (env.SMTP_CHARSET) {
+      mailer.setCharset(env.SMTP_CHARSET)
+    }
+
+    mailer.save()
+    instance.save()
+  }
+} else {
+  logger.info("The 'mailer' plugin is not installed; skipping mail server configuration")
+}
+
+

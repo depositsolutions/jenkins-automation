@@ -1,0 +1,21 @@
+// Set number of executors
+
+import java.util.logging.Logger
+import jenkins.model.*
+
+def logger = Logger.getLogger("")
+def env = System.getenv()
+
+String numberOfExecutorsString = env.JENKINS_MASTER_EXECUTORS
+if (numberOfExecutorsString) {
+    def instance = Jenkins.getInstance()
+    int currentNumberOfExecutors = instance.getNumExecutors()
+    int definedNumberOfExecutors = Integer.parseInt(numberOfExecutorsString)
+    if (currentNumberOfExecutors != definedNumberOfExecutors) {
+        instance.setNumExecutors(definedNumberOfExecutors)
+        instance.save()
+    }
+    logger.info("Number of executors of the Jenkins master set to " + definedNumberOfExecutors)
+} else {
+    logger.warn("Number of executors of the Jenkins master not set")
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.depositsolutions.infrastructure</groupId>
+  <artifactId>auto-jenkins</artifactId>
+  <version>latest</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <dockerImageName>depositsolutions/jenkins-automation</dockerImageName>
+    <!-- If a proxy is needed while building the Jenkins, configure it here in the form of "http://1.2.3.4:3128/". To build locally, use the 'local' profile with "-P local". -->
+    <http.proxy></http.proxy>
+    <no.proxy>localhost,127.0.0.0/8,127.0.0.1</no.proxy>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <scm>
+    <developerConnection>scm:git:git@github.com:depositsolutions/jenkins-automation.git</developerConnection>
+  </scm>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <excludes>
+          <exclude>docker/**</exclude>
+        </excludes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.3.5</version>
+        <configuration>
+          <contextDirectory>src/main/resources/docker</contextDirectory>
+          <repository>${dockerImageName}</repository>
+          <buildArgs>
+            <httpProxy>${http.proxy}</httpProxy>
+            <noProxy>${no.proxy}</noProxy>
+          </buildArgs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <!-- This is necessary to prevent the plugin from trying to upload two different docker-info.jar files
+              with the same name. The one generated during this phase is not required. See
+              https://github.com/spotify/dockerfile-maven/issues/11 -->
+              <classifier>docker-info-tmp</classifier>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tag-image</id>
+            <phase>install</phase>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <tag>${project.version}</tag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.7</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <http.proxy></http.proxy>
+        <no.proxy></no.proxy>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

@@ -1,0 +1,62 @@
+import java.util.logging.Logger
+import jenkins.model.*
+import hudson.security.*
+import hudson.tasks.Mailer
+
+class UserDefinition {
+  final String userName
+  final String emailAddress
+
+  UserDefinition(userName, emailAddress) {
+    this.userName = userName
+    this.emailAddress = emailAddress
+  }
+}
+
+def logger = Logger.getLogger("")
+def instance = Jenkins.getInstance()
+def pluginManager = instance.getPluginManager()
+
+def users = [
+  // Add users here if you want, but don't do this until you're sure you actually need user accounts!
+  //
+  // Anonymous users can take all relevant actions (like stopping/restarting jobs) and since they cannot take any
+  // destructive action, this is usually fine.
+  //
+  // new UserDefinition('example', 'example@example.com'),
+]
+def permissions = [
+  // Permission.fromId("hudson.model.Hudson.Read"),
+  // Permission.fromId("hudson.model.Item.Build"),
+  // Permission.fromId("hudson.model.Item.Cancel"),
+  // Permission.fromId("hudson.model.Item.Create"),
+  // Permission.fromId("hudson.model.Item.Delete"),
+  // Permission.fromId("hudson.model.Item.Discover"),
+  // Permission.fromId("hudson.model.Item.Read"),
+  // Permission.fromId("hudson.model.Item.Workspace"),
+  // Permission.fromId("hudson.model.View.Configure"),
+  // Permission.fromId("hudson.model.View.Create"),
+  // Permission.fromId("hudson.model.View.Delete"),
+  // Permission.fromId("hudson.model.View.Read"),
+]
+
+if (pluginManager.getPlugin('mailer')) {
+  logger.info("Users to create: " + users)
+
+  def strategy = (GlobalMatrixAuthorizationStrategy) instance.getAuthorizationStrategy()
+
+  users.each { userDefinition ->
+    def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+    def user = hudsonRealm.createAccount(userDefinition.userName, userDefinition.userName)
+    user.addProperty(new Mailer.UserProperty(userDefinition.emailAddress)); 
+    instance.setSecurityRealm(hudsonRealm)
+
+    permissions.each { permission ->
+      strategy.add(permission, userDefinition.userName)
+    }
+  }
+
+  instance.save()
+} else {
+  logger.info("The 'mailer' plugin is not installed; skipping user creation")
+}
