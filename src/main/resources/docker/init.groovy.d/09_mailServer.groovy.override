@@ -32,4 +32,14 @@ if (pluginManager.getPlugin('mailer')) {
   logger.info("The 'mailer' plugin is not installed; skipping mail server configuration")
 }
 
+if (pluginManager.getPlugin('email-ext')) {
+    def emailExt = instance.getDescriptor("hudson.plugins.emailext.ExtendedEmailPublisher")
+    // This method is not documented in Javadoc, but can be found here:
+    // https://github.com/jenkinsci/email-ext-plugin/blob/master/src/main/java/hudson/plugins/emailext/ExtendedEmailPublisherDescriptor.java#L546
+    emailExt.setAllowUnregisteredEnabled(true)
 
+    emailExt.save()
+    instance.save()
+} else {
+  logger.info("The 'email-ext' plugin is not installed; skipping mail server configuration")
+}
