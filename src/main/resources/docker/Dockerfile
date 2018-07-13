@@ -1,5 +1,5 @@
 # Build from latest LTS version
-FROM jenkins/jenkins:2.107.2-alpine
+FROM jenkins/jenkins:2.107.3-alpine
 LABEL "maintainer"="Deposit Solutions"
 LABEL "github-url"="https://github.com/depositsolutions/jenkins-automation"
 
