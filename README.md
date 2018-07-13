@@ -55,6 +55,7 @@ JENKINS_BASE_URL | The base URL of Jenkins
 JENKINS_MASTER_EXECUTORS | The number of executors for the master
 JENKINS_SLAVEPORT | Port for slaves to connect to
 SMTP_HOST | SMTP server hostname
+SMTP_PORT | SMTP server port number
 
 
 ## How to add a new job

@@ -10,6 +10,7 @@ def pluginManager = instance.getPluginManager()
 
 if (pluginManager.getPlugin('mailer')) {
   def smtpHost = env.SMTP_HOST
+  def smtpPort = env.SMTP_PORT
   if (smtpHost) {
     def mailer = instance.getDescriptor("hudson.tasks.Mailer")
 
@@ -17,7 +18,9 @@ if (pluginManager.getPlugin('mailer')) {
     //mailer.setReplyToAddress(...)
     mailer.setSmtpHost(smtpHost)
     //mailer.setUseSsl(...)
-    //mailer.setSmtpPort(...)
+    if (smtpPort) {
+      mailer.setSmtpPort(smtpPort)
+    }
     if (env.SMTP_CHARSET) {
       mailer.setCharset(env.SMTP_CHARSET)
     }
